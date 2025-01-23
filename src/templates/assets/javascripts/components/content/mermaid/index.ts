@@ -28,9 +28,9 @@ import {
   tap
 } from "rxjs"
 
+import { MermaidConfig } from "~/_"
 import { watchScript } from "~/browser"
 import { h } from "~/utilities"
-import { MermaidConfig } from "~/_"
 
 import { Component } from "../../_"
 
@@ -66,12 +66,13 @@ let sequence = 0
 /**
  * Fetch Mermaid script
  *
+ * @param config - Mermaid configuration
  * @returns Mermaid scripts observable
  */
 function fetchScripts(config?: MermaidConfig): Observable<void> {
-  let version = "11";
+  let version = "11"
   if (config && config.version) {
-    version = config.version;
+    version = config.version
   }
 
   return typeof mermaid === "undefined" || mermaid instanceof Element
@@ -83,13 +84,12 @@ function fetchScripts(config?: MermaidConfig): Observable<void> {
  * Functions
  * ------------------------------------------------------------------------- */
 
-
 /**
  * Icon descriptor for Mermaid JS icon Packs
  */
 interface IconPackDescriptor {
-  name: string,
-  loader: () => Promise<any>
+  name: string
+  loader: () => Promise<unknown>
 }
 
 /**
@@ -100,35 +100,35 @@ interface IconPackDescriptor {
  */
 export function prepareIconDescriptor(iconName: string):  IconPackDescriptor | undefined {
   // First - we need to strip type from full icon name
-  const parts = iconName.split(':');
+  const parts = iconName.split(":")
   if (parts.length < 2) {
-    return undefined;
+    return undefined
   }
 
-  switch (parts[0]){
-    case 'url':
+  switch (parts[0]) {
+    case "url":
       if (parts.length < 3) {
-        return undefined;
+        return undefined
       }
 
-      const url = parts.slice(2).join(':');
+      const url = parts.slice(2).join(":")
       return {
         name: parts[1],
-        loader: () => fetch(url).then((res) => res.json()),
+        loader: () => fetch(url).then(res => res.json())
       }
-    case 'iconify':
-      const iconifyParts = parts[1].split('@', 2);
+    case "iconify":
+      const iconifyParts = parts[1].split("@", 2)
       if (iconifyParts.length !== 2) {
-        return undefined;
+        return undefined
       }
 
       return {
         name: iconifyParts[0],
-        loader: () => fetch(`https://unpkg.com/@iconify-json/${parts[1]}/icons.json`).then((res) => res.json()),
+        loader: () => fetch(`https://unpkg.com/@iconify-json/${parts[1]}/icons.json`).then(res => res.json())
       }
 
     default:
-      return undefined;
+      return undefined
   }
 }
 
@@ -137,6 +137,7 @@ export function prepareIconDescriptor(iconName: string):  IconPackDescriptor | u
  *
  * @param el - Code block element
  *
+ * @param config - Mermaid configuration
  * @returns Mermaid diagram component observable
  */
 export function mountMermaid(
@@ -154,13 +155,13 @@ export function mountMermaid(
             messageFontSize: "16px",
             noteFontSize: "16px"
           }
-        });
+        })
 
         /* Load icon packs */
         if (config && config.iconPacks) {
           mermaid.registerIconPacks(
             config.iconPacks.map(name => prepareIconDescriptor(name)).filter(descriptor => descriptor !== undefined)
-          );
+          )
         }
       }),
       map(() => undefined),
